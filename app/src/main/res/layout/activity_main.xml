@@ -1,0 +1,100 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_gravity="center_horizontal"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:screenOrientation="portrait">
+
+    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/changeB"
+            android:text="@string/change"/>
+        <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/addB"
+        android:text="@string/add"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveB"
+            android:text="@string/save"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/total"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/totalTV"
+            android:text="@string/total"/>
+
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:background="#00FF00">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/parentTable">
+            <TableRow>
+                <Button
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/delete"
+                    android:id="@+id/deleteB1"
+                    android:enabled="false"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/itemTV1"
+                    android:text="@string/item"/>
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/itemET1"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/priceTV1"
+                    android:text="@string/price"/>
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/priceET1"
+                    android:numeric="decimal"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/numberTV1"
+                    android:text="@string/number"/>
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/numberET1"
+                    android:numeric="decimal"/>
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+</LinearLayout>

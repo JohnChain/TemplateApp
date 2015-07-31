@@ -1,6 +1,7 @@
 package com.example.arnold.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
@@ -30,15 +31,14 @@ public class MainActivity extends AppCompatActivity {
     public Button changeB;
     public Button addB;
     public Button saveB;
-    public Button deleteB1;
     public TableLayout parentTable;
-    public TextView textView;
+    public TextView totalTV;
 
+    private DBHelper DBHP;
+
+//    private List<Integer> indexList = new ArrayList<Integer>();
+//    private List<Integer> reservedList = new ArrayList<Integer>();
     public boolean changing = false;
-
-    private List<Integer> indexList = new ArrayList<Integer>();
-    private List<Integer> reservedList = new ArrayList<Integer>();
-
     private final String MYTAG = "johnchain";
 
     @Override
@@ -49,16 +49,14 @@ public class MainActivity extends AppCompatActivity {
         this.changeB = new Button(this);
         this.addB = new Button(this);
         this.saveB = new Button(this);
-        this.deleteB1 = new Button(this);
         this.parentTable = new TableLayout(this);
-        this.textView = new TextView(this);
+        this.totalTV = new TextView(this);
 
         changeB = (Button)findViewById(R.id.changeB);
         addB = (Button)findViewById(R.id.addB);
         saveB = (Button)findViewById(R.id.saveB);
-        deleteB1 = (Button)findViewById(R.id.deleteB1);
         parentTable = (TableLayout)findViewById(R.id.parentTable);
-        textView = (TextView)findViewById(R.id.textView);
+        totalTV = (TextView)findViewById(R.id.totalTV);
 
         addB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -75,6 +73,17 @@ public class MainActivity extends AppCompatActivity {
                 onSaveItem();
             }
         });
+
+        this.DBHP = new DBHelper(this);
+        Cursor cursor = this.DBHP.select_all();
+        int count = cursor.getCount();
+        for(int i = count; i < count; i++){
+            cursor.moveToPosition(i);
+            String item = cursor.getString(0);
+            float price = cursor.getFloat(1);
+            addItem(item, price);
+        }
+        cursor.close();
     }
 
     public boolean onSaveItem(){
@@ -82,21 +91,56 @@ public class MainActivity extends AppCompatActivity {
         // 1：将所有可编辑项设为 disable状态
         // 2：将编辑项的值存储
 
-        Iterator<Integer> iter = indexList.iterator();
-        while(iter.hasNext()){
-            TableRow subRow = (TableRow)parentTable.getChildAt(iter.next());
+        int total = 0;
+        int count = parentTable.getChildCount();
+        for(int i = 0; i < count;i++){
+            TableRow subRow = (TableRow)parentTable.getChildAt(i);
             ((Button)subRow.findViewById(R.id.deleteB1)).setEnabled(false);
             ((EditText)subRow.findViewById(R.id.itemET1)).setEnabled(false);
             ((EditText)subRow.findViewById(R.id.priceET1)).setEnabled(false);
+
+            EditText temp = (EditText) subRow.findViewById(R.id.numberET1);
+            if(temp == null){
+                Log.e(MYTAG, "temp is null");
+            }else {
+                String numberS = temp.getText().toString();
+                if(!numberS.equals("")) {
+                    total += Integer.parseInt(numberS);
+                }
+            }
+        }
+        this.changing = false;
+        Log.e(MYTAG, "total momey = " + total);
+        this.totalTV.setText("" + total);
+
+        //TODO:
+        // will save data below
+        this.DBHP.delete_all();
+        for(int i = 0; i < count;i++){
+            TableRow subRow = (TableRow)parentTable.getChildAt(i);
+            String item = ((EditText)subRow.findViewById(R.id.itemET1)).getText().toString();
+            String priceString = ((EditText) subRow.findViewById(R.id.priceET1)).getText().toString();
+            float price = 0;
+            if(!priceString.equals("") && !item.equals("")) {
+                price = Float.parseFloat(priceString);
+                this.DBHP.insert(item, price);
+            }else{
+                Log.e(MYTAG, "item and price cannot be null");
+                Toast toast = Toast.makeText(getApplicationContext(), "项目和单价不能为空", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
+        Log.e(MYTAG, "insert finished, query below");
+        Cursor cursor = this.DBHP.select_all();
+        int rows = cursor.getCount();
+        for(int i = 0; i < rows; i++){
+            cursor.moveToPosition(i);
+            String item = cursor.getString(0);
+            float price = cursor.getFloat(1);
+            Log.e(MYTAG, "In select row: " + i + ": item: " + item + " price: " + price);
         }
 
-        int total = 0;
-        int count = parentTable.getChildCount();
-        for(int i = 0; i < count; i++){
-            total += Integer.parseInt(((EditText) parentTable.getChildAt(i).findViewById(R.id.numberET1)).getText().toString());
-        }
-        Log.e(MYTAG, "total momey = " + total);
-        this.changing = false;
+        cursor.close();
         return true;
     }
 
@@ -107,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
         int index = parentTable.indexOfChild(subRow);
         parentTable.removeView(subRow);
         Log.e(MYTAG, "index = " + index + "removed");
-        indexList.remove((Integer) index);
-        reservedList.add((Integer) index);
-        Log.e(MYTAG, "indexList = " + indexList + " | reservedList = " + reservedList);
 
         // ADD: test MO, MT, SMS, PBR,
         Toast toast= Toast.makeText(getApplicationContext(), "will delete SubRowTable ", Toast.LENGTH_SHORT);
@@ -124,9 +165,10 @@ public class MainActivity extends AppCompatActivity {
         if(this.changing == true) {
             return true;
         }
-        Iterator<Integer> iter = indexList.iterator();
-        while(iter.hasNext()){
-            TableRow subRow = (TableRow)parentTable.getChildAt(iter.next());
+        int total = 0;
+        int count = parentTable.getChildCount();
+        for(int i = 0; i < count;i++){
+            TableRow subRow = (TableRow)parentTable.getChildAt(i);
             ((Button)subRow.findViewById(R.id.deleteB1)).setEnabled(true);
             ((EditText)subRow.findViewById(R.id.itemET1)).setEnabled(true);
             ((EditText)subRow.findViewById(R.id.priceET1)).setEnabled(true);
@@ -135,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public int onAddItem(){
+    public boolean onAddItem(){
         // 获取一个可用的RowTable的序号
-        final int index = getIndex();
+        //final int index = getIndex();
         // create subtable contents
         Button deleteB = new Button(this);
         deleteB.setText(R.string.delete);
@@ -153,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView itemTV = new TextView(this);
         //itemTV.setText(R.string.item + index);
-        itemTV.setText("项目" + index);
+        itemTV.setText(R.string.item);
 
         EditText itemET = new EditText(this);
         itemET.setId(R.id.itemET1);
@@ -169,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         numberTV.setText(R.string.number);
 
         EditText numberET = new EditText(this);
+        numberET.setId(R.id.numberET1);
         numberET.setKeyListener(new DigitsKeyListener(false, true));  //设置文本编辑框仅数字模式
 
         TableRow subTable = new TableRow(this);
@@ -180,37 +223,91 @@ public class MainActivity extends AppCompatActivity {
         subTable.addView(numberTV);
         subTable.addView(numberET);
 
-        parentTable.addView(subTable, index);
-        Log.e(MYTAG, "indexList = " + indexList + " | reservedList = " + reservedList);
-        return index;
+        parentTable.addView(subTable);
+
+        return true;
     }
 
-    // 获取与一个可用的index， 用于新建的RowTable
-    private int getIndex(){
-        int index = 0;
-        if(!reservedList.isEmpty()){
-            index = reservedList.remove(0);
-            indexList.add(index);
-            Log.e(MYTAG, "In getIndex, index[0] = " + index);
-            //this.textView.setText("In getIndex, index[0] = " + index + ", removed[0] = " + removed);
-            return index;
-        }
-        if(!indexList.isEmpty()){
-            Iterator<Integer> iter = indexList.iterator();
-            while(iter.hasNext()){
-                int next = iter.next();
-                if(next > index)
-                    index = next;
+    public boolean addItem(String item, float price){
+        // 获取一个可用的RowTable的序号
+        //final int index = getIndex();
+        // create subtable contents
+        Button deleteB = new Button(this);
+        deleteB.setText(R.string.delete);
+        deleteB.setId(R.id.deleteB1);
+        deleteB.setEnabled(false);
+        //final TableLayout localParentTable = parentTable;
+        deleteB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.e(MYTAG, "Clicked Button parent type is: " + v.getParent().getClass().toString());
+                onDeleteItem((TableRow) (v.getParent()));
             }
-            indexList.add(index + 1);
-            Log.e(MYTAG, "in getIndex add index " + (index + 1));
-            this.textView.setText("in getIndex add index " + (index + 1));
-            return index + 1;
-        }
-        index = 0;
-        indexList.add(index);
-        return index;
+        });
+
+        TextView itemTV = new TextView(this);
+        //itemTV.setText(R.string.item + index);
+        itemTV.setText(R.string.item);
+
+        EditText itemET = new EditText(this);
+        itemET.setId(R.id.itemET1);
+        itemET.setText(item);
+        itemET.setEnabled(false);
+
+        TextView priceTV = new TextView(this);
+        priceTV.setText(R.string.price);
+
+        EditText priceET = new EditText(this);
+        priceET.setKeyListener(new DigitsKeyListener(false, true));  //设置文本编辑框仅数字模式
+        priceET.setId(R.id.priceET1);
+        priceET.setText("" + price);
+        priceET.setEnabled(false);
+
+        TextView numberTV = new TextView(this);
+        numberTV.setText(R.string.number);
+
+        EditText numberET = new EditText(this);
+        numberET.setId(R.id.numberET1);
+        numberET.setKeyListener(new DigitsKeyListener(false, true));  //设置文本编辑框仅数字模式
+
+        TableRow subTable = new TableRow(this);
+        subTable.addView(deleteB);
+        subTable.addView(itemTV);
+        subTable.addView(itemET);
+        subTable.addView(priceTV);
+        subTable.addView(priceET);
+        subTable.addView(numberTV);
+        subTable.addView(numberET);
+
+        parentTable.addView(subTable);
+        return true;
     }
+
+//    // 获取与一个可用的index， 用于新建的RowTable
+//    private int getIndex(){
+//        int index = 0;
+//        if(!reservedList.isEmpty()){
+//            index = reservedList.remove(0);
+//            indexList.add(index);
+//            Log.e(MYTAG, "In getIndex, index[0] = " + index);
+//            //this.textView.setText("In getIndex, index[0] = " + index + ", removed[0] = " + removed);
+//            return index;
+//        }
+//        if(!indexList.isEmpty()){
+//            Iterator<Integer> iter = indexList.iterator();
+//            while(iter.hasNext()){
+//                int next = iter.next();
+//                if(next > index)
+//                    index = next;
+//            }
+//            indexList.add(index + 1);
+//            Log.e(MYTAG, "in getIndex add index " + (index + 1));
+//            this.textView.setText("in getIndex add index " + (index + 1));
+//            return index + 1;
+//        }
+//        index = 0;
+//        indexList.add(index);
+//        return index;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -8,9 +8,6 @@
     android:orientation="vertical"
     android:screenOrientation="portrait">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView" />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -30,6 +27,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/saveB"
             android:text="@string/save"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/calcuB"
+            android:text="@string/calcu"/>
     </LinearLayout>
 
     <LinearLayout
@@ -39,12 +41,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:text="@string/total"/>
+            android:text="@string/total"
+            android:textSize="15pt"
+            android:textColor="#EE6A50"
+            android:textStyle="bold"/>
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/totalTV"
-            android:text="@string/total"/>
+            android:textSize="15pt"
+            android:textColor="#EE6A50"
+            android:textStyle="bold"/>
 
     </LinearLayout>
     <ScrollView
@@ -53,48 +60,48 @@
         android:id="@+id/scrollView"
         android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
-        android:background="#00FF00">
+        android:background="#AAAAAA">
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/parentTable">
-            <TableRow>
-                <Button
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="@string/delete"
-                    android:id="@+id/deleteB1"
-                    android:enabled="false"/>
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/itemTV1"
-                    android:text="@string/item"/>
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/itemET1"/>
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/priceTV1"
-                    android:text="@string/price"/>
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/priceET1"
-                    android:numeric="decimal"/>
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/numberTV1"
-                    android:text="@string/number"/>
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/numberET1"
-                    android:numeric="decimal"/>
-            </TableRow>
+            <!--<TableRow>-->
+                <!--<Button-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:id="@+id/deleteB1"-->
+                    <!--android:background="@drawable/button_minus_red"-->
+                    <!--android:enabled="false"/>-->
+                <!--<TextView-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:id="@+id/itemTV1"-->
+                    <!--android:text="@string/item"/>-->
+                <!--<EditText-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/itemET1"/>-->
+                <!--<TextView-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:id="@+id/priceTV1"-->
+                    <!--android:text="@string/price"/>-->
+                <!--<EditText-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/priceET1"-->
+                    <!--android:numeric="decimal"/>-->
+                <!--<TextView-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:id="@+id/numberTV1"-->
+                    <!--android:text="@string/number"/>-->
+                <!--<EditText-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/numberET1"-->
+                    <!--android:numeric="decimal"/>-->
+            <!--</TableRow>-->
         </TableLayout>
     </ScrollView>
 </LinearLayout>
